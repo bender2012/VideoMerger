@@ -1,5 +1,10 @@
 package com.epam.vm.app;
 
+import com.epam.vm.enums.ApplicationSetting;
+import com.epam.vm.settings.PropertiesReader;
+import com.epam.vm.settings.impl.PropertiesReaderImpl;
+
+
 public class Application {
 
 	public Application() {
@@ -10,9 +15,10 @@ public class Application {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("Hello World!!!");
 
+		PropertiesReader properties = new PropertiesReaderImpl();
+		System.out.println(properties.getPropertyValue(ApplicationSetting.FFMPEG_COMMANDS));
+		
 	}
 
 }
