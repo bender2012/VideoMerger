@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.exceptions.WrongExtentionLength;
-import com.epam.vm.exceptions.WrongFileNameLength;
+import com.epam.vm.exceptions.WrongExtentionLengthException;
+import com.epam.vm.exceptions.WrongFileNameLengthException;
 
 public interface FileService {
 
@@ -17,7 +17,7 @@ public interface FileService {
 			throws NotFolderException;
 
 	String getFileNameWithoutExtention(String fileName, String extention)
-			throws WrongFileNameLength, WrongExtentionLength,
+			throws WrongFileNameLengthException, WrongExtentionLengthException,
 			IllegalArgumentException;
 
 }

@@ -15,8 +15,8 @@ import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.etc.filefilters.ExtentionFileFilterFactory;
 import com.epam.vm.etc.filefilters.impl.ExtentionFileFilterFactoryImpl;
 import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.exceptions.WrongExtentionLength;
-import com.epam.vm.exceptions.WrongFileNameLength;
+import com.epam.vm.exceptions.WrongExtentionLengthException;
+import com.epam.vm.exceptions.WrongFileNameLengthException;
 import com.epam.vm.service.file.FileService;
 import com.epam.vm.service.settings.ApplicationConstants;
 import com.epam.vm.service.settings.impl.PropertiesReaderImpl;
@@ -81,12 +81,12 @@ public class FileServiceImpl implements FileService {
 						logger.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
 								e);
-					} catch (WrongFileNameLength e) {
+					} catch (WrongFileNameLengthException e) {
 						logger.info(WRONG_FILENAME_LENGTH);
 						logger.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
 								e);
-					} catch (WrongExtentionLength e) {
+					} catch (WrongExtentionLengthException e) {
 						logger.info(WRONG_EXTENTION_LENGTH);
 						logger.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
@@ -100,16 +100,16 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public String getFileNameWithoutExtention(String fileName, String extention)
-			throws WrongFileNameLength, WrongExtentionLength,
+			throws WrongFileNameLengthException, WrongExtentionLengthException,
 			IllegalArgumentException {
 		String returnFileName = null;
 		int fileNameLength = fileName.length();
 		int extentionLength = extention.length();
 		if (fileNameLength <= 0) {
-			throw new WrongFileNameLength();
+			throw new WrongFileNameLengthException();
 		}
 		if (extentionLength <= 0) {
-			throw new WrongExtentionLength();
+			throw new WrongExtentionLengthException();
 		}
 		if ((fileNameLength - extentionLength) <= 1) {
 			throw new IllegalArgumentException();
