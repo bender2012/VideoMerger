@@ -2,6 +2,9 @@ package com.epam.vm.service.settings;
 
 public class ApplicationConstants {
 	
-	public final static String propertiesFileName = "settings.properties";
+	public static final String propertiesFileName = "settings.properties";
+	public static final String EXCEPTION_LOGGER_TEMPLATE = "Exception {}";
+	public static final String FFMPEG_APPLICATION_NAME = "ffmpeg.exe";
+	
 
 }

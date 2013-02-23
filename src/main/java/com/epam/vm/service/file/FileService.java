@@ -5,11 +5,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.epam.vm.exceptions.NotFolderException;
+import com.epam.vm.exceptions.WrongExtentionLength;
+import com.epam.vm.exceptions.WrongFileNameLength;
 
 public interface FileService {
-	
+
 	List<File> getInputFolderList(String inputFolders);
-	
-	Map<File, File> getVideoWithSubtitlesPairs(File inputFolder) throws NotFolderException;
-		
+
+	//Video file : Sysbtitle file
+	Map<File, File> getVideoWithSubtitlesPairs(File inputFolder)
+			throws NotFolderException;
+
+	String getFileNameWithoutExtention(String fileName, String extention)
+			throws WrongFileNameLength, WrongExtentionLength,
+			IllegalArgumentException;
+
 }

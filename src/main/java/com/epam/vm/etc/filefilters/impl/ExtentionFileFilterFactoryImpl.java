@@ -25,14 +25,14 @@ public class ExtentionFileFilterFactoryImpl implements
 
 	@Override
 	public FilenameFilter getVideoFileFilter() {
-		PropertiesReader propertiesReader = new PropertiesReaderImpl();
+		PropertiesReader propertiesReader = PropertiesReaderImpl.getInstance();
 		return getExtentionFileFilter(propertiesReader
 				.getPropertyValue(ApplicationSetting.VIDEO_FILE_EXTENTION));
 	}
 
 	@Override
 	public FilenameFilter getSybtitlesFileFilter() {
-		PropertiesReader propertiesReader = new PropertiesReaderImpl();
+		PropertiesReader propertiesReader = PropertiesReaderImpl.getInstance();
 		return getExtentionFileFilter(propertiesReader
 				.getPropertyValue(ApplicationSetting.SYBTITLE_FILE_EXTENTION));
 	}

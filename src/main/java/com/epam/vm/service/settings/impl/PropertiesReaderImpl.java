@@ -19,11 +19,21 @@ public class PropertiesReaderImpl implements PropertiesReader {
 			.getLogger(PropertiesReaderImpl.class);
 	private static final String EXCEPTION_LOG_STRING = "Exception: {}";
 	private static final String FILE_NOT_FOUND_LOG_STRING = "File not found: {}";
+	private static final String START_READ_PROPERTIES = "Starting read properties file: {}";
+	private static final String PROPERTY_TEMPLATE = "{} {}";
+	private static PropertiesReader instance;
 	private static Map<ApplicationSetting, String> propertiesMap;
 
-	public PropertiesReaderImpl() {
+	private PropertiesReaderImpl() {
 		super();
 		propertiesMap = null;
+	}
+	
+	public static PropertiesReader getInstance(){
+		if(instance == null){
+			instance = new PropertiesReaderImpl();			
+		}
+		return instance;
 	}
 
 	private static void init() {
@@ -37,11 +47,15 @@ public class PropertiesReaderImpl implements PropertiesReader {
 		propertiesFileName.append(File.separator);
 		propertiesFileName.append(ApplicationConstants.propertiesFileName);
 		Properties applicatioProperties = new Properties();
+		logger.info(START_READ_PROPERTIES, propertiesFileName);
 		try {
 			applicatioProperties.load(new FileInputStream(new File(
 					propertiesFileName.toString())));
 			for (ApplicationSetting applicationSetting : ApplicationSetting
 					.values()) {
+				logger.info(PROPERTY_TEMPLATE, applicationSetting
+						.getSettingName(), applicatioProperties
+						.getProperty(applicationSetting.getSettingName()));
 				propertiesMap.put(applicationSetting, applicatioProperties
 						.getProperty(applicationSetting.getSettingName()));
 			}
