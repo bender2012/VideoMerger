@@ -28,10 +28,10 @@ public class PropertiesReaderImpl implements PropertiesReader {
 		super();
 		propertiesMap = null;
 	}
-	
-	public static PropertiesReader getInstance(){
-		if(instance == null){
-			instance = new PropertiesReaderImpl();			
+
+	public static PropertiesReader getInstance() {
+		if (instance == null) {
+			instance = new PropertiesReaderImpl();
 		}
 		return instance;
 	}
