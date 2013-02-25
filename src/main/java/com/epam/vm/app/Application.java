@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.exceptions.NotFolderException;
+import com.epam.vm.service.execution.CommandFormer;
+import com.epam.vm.service.execution.impl.CommandFormerImpl;
 import com.epam.vm.service.file.FileService;
 import com.epam.vm.service.file.impl.FileServiceImpl;
 import com.epam.vm.service.settings.PropertiesReader;
@@ -38,6 +40,11 @@ public class Application {
 				e.printStackTrace();
 			}
 		}
+		
+		CommandFormer cf = new CommandFormerImpl();
+		System.out.println(cf.getCommandFromApplicationSettings("D:\\tmp\\a.avs", "D:\\tmp\\01_05_.wmv"));
+		
+		
 	}
 	
 	
