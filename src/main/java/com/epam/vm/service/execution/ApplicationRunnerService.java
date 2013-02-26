@@ -1,6 +1,6 @@
 package com.epam.vm.service.execution;
 
-public interface ApplicationRunner {
+public interface ApplicationRunnerService {
 
 	void runApplication(String commandString);
 

@@ -1,6 +1,6 @@
 package com.epam.vm.enums;
 
-public enum FFMPEG_PARAMS {
+public enum FFMPEG_PARAM {
 
 	INPUT_FILE("-i"),
 	SAME_QUOLITY("-qscale 0"),
@@ -8,7 +8,7 @@ public enum FFMPEG_PARAMS {
 
 	private String commandString;
 
-	private FFMPEG_PARAMS(String commandString) {
+	private FFMPEG_PARAM(String commandString) {
 		this.commandString = String.valueOf(commandString);
 	}
 

@@ -38,6 +38,7 @@
 						<configuration>
 							<tasks>
 								<copy file="settings.properties" tofile="target/settings.properties" />
+								<copy file="avs-script.template" tofile="target/avs-script.template" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -90,17 +91,17 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.2</version>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-simple</artifactId> 
+			<version>1.7.2</version> </dependency> -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.5</version>
 		</dependency>
 	</dependencies>
 </project>

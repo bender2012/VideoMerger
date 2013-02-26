@@ -19,5 +19,7 @@ public interface FileService {
 	String getFileNameWithoutExtention(String fileName, String extention)
 			throws WrongFileNameLengthException, WrongExtentionLengthException,
 			IllegalArgumentException;
+	
+	File formAvsScriptFile(String filePath, List<String> scriptLines);
 
 }

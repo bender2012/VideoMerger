@@ -5,13 +5,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.vm.service.execution.ApplicationRunner;
+import com.epam.vm.service.execution.ApplicationRunnerService;
 import com.epam.vm.service.settings.ApplicationConstants;
 
-public class ApplicationRunnerImpl implements ApplicationRunner {
+public class ApplicationRunnerServiceImpl implements ApplicationRunnerService {
 
 	private static final Logger debugLogger = LoggerFactory
-			.getLogger(ApplicationRunnerImpl.class);
+			.getLogger(ApplicationRunnerServiceImpl.class);
 
 	@Override
 	public void runApplication(String commandString) {

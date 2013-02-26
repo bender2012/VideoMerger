@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.service.execution.CommandFormer;
-import com.epam.vm.service.execution.impl.CommandFormerImpl;
+import com.epam.vm.service.execution.CommandFormerService;
+import com.epam.vm.service.execution.impl.CommandFormerServiceImpl;
 import com.epam.vm.service.file.FileService;
+import com.epam.vm.service.file.avs.AvsScriptService;
+import com.epam.vm.service.file.avs.impl.AvsScriptServiceImpl;
 import com.epam.vm.service.file.impl.FileServiceImpl;
-import com.epam.vm.service.settings.PropertiesReader;
-import com.epam.vm.service.settings.impl.PropertiesReaderImpl;
+import com.epam.vm.service.settings.PropertiesReaderService;
+import com.epam.vm.service.settings.impl.PropertiesReaderServiceImpl;
 
 
 public class Application {
@@ -25,7 +27,7 @@ public class Application {
 	public static void main(String[] args) {
 		
 
-		PropertiesReader properties = PropertiesReaderImpl.getInstance();
+		PropertiesReaderService properties = PropertiesReaderServiceImpl.getInstance();
 //		System.out.println(properties.getPropertyValue(ApplicationSetting.FFMPEG_COMMANDS));
 //		System.out.println(properties.getPropertyValue(ApplicationSetting.INPUT_FOLDERS));
 //		System.out.println(properties.getPropertyValue(ApplicationSetting.OUTPUT_FOLDER));
@@ -41,9 +43,11 @@ public class Application {
 			}
 		}
 		
-		CommandFormer cf = new CommandFormerImpl();
+		CommandFormerService cf = new CommandFormerServiceImpl();
 		System.out.println(cf.getCommandFromApplicationSettings("D:\\tmp\\a.avs", "D:\\tmp\\01_05_.wmv"));
 		
+		AvsScriptService a = new AvsScriptServiceImpl();
+		a.getScriptCommandsFromTemplate();
 		
 	}
 	

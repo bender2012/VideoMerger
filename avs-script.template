@@ -1,0 +1,3 @@
+LoadPlugin("$VS_FILTER_PATH$")
+AviSource("$INPUT_VIDEO_FILE$")
+TextSub("$INPUT_SYBTITLE_FILE$")

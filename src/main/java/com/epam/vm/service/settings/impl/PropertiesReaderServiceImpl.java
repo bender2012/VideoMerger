@@ -11,34 +11,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.service.settings.ApplicationConstants;
-import com.epam.vm.service.settings.PropertiesReader;
+import com.epam.vm.service.settings.PropertiesReaderService;
 
-public class PropertiesReaderImpl implements PropertiesReader {
+public class PropertiesReaderServiceImpl implements PropertiesReaderService {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(PropertiesReaderImpl.class);
+			.getLogger(PropertiesReaderServiceImpl.class);
 	private static final String EXCEPTION_LOG_STRING = "Exception: {}";
 	private static final String FILE_NOT_FOUND_LOG_STRING = "File not found: {}";
 	private static final String START_READ_PROPERTIES = "Starting read properties file: {}";
 	private static final String PROPERTY_TEMPLATE = "{} {}";
-	private static PropertiesReader instance;
+	private static PropertiesReaderService instance;
 	private static Map<ApplicationSetting, String> propertiesMap;
 
-	private PropertiesReaderImpl() {
+	private PropertiesReaderServiceImpl() {
 		super();
 		propertiesMap = null;
 	}
 
-	public static PropertiesReader getInstance() {
+	public static PropertiesReaderService getInstance() {
 		if (instance == null) {
-			instance = new PropertiesReaderImpl();
+			instance = new PropertiesReaderServiceImpl();
 		}
 		return instance;
 	}
 
 	private static void init() {
 		propertiesMap = new HashMap<ApplicationSetting, String>();
-		String applicationPath = PropertiesReaderImpl.class
+		String applicationPath = PropertiesReaderServiceImpl.class
 				.getProtectionDomain().getCodeSource().getLocation().getPath();
 		File temporaryFile = new File(applicationPath);
 		String parrentFolder = temporaryFile.getParent();

@@ -1,6 +1,6 @@
 package com.epam.vm.service.execution;
 
-public interface CommandFormer {
+public interface CommandFormerService {
 
 	String getCommandFromApplicationSettings(String inputFilePath,
 			String outputFilePath);

@@ -1,7 +1,10 @@
 package com.epam.vm.service.file.impl;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,23 +22,26 @@ import com.epam.vm.exceptions.WrongExtentionLengthException;
 import com.epam.vm.exceptions.WrongFileNameLengthException;
 import com.epam.vm.service.file.FileService;
 import com.epam.vm.service.settings.ApplicationConstants;
-import com.epam.vm.service.settings.impl.PropertiesReaderImpl;
+import com.epam.vm.service.settings.impl.PropertiesReaderServiceImpl;
 
 public class FileServiceImpl implements FileService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(FileServiceImpl.class);
 
-	private static final String folderListSeparator = ";";
-	private static final String ILLEGALE_ARGUMENT_TEMPLATE = null;
-	private static final String WRONG_FILENAME_LENGTH = null;
-	private static final String WRONG_EXTENTION_LENGTH = null;
+	private static final String FOLDER_LIST_SEPARATOR = ";";
+	private static final String ILLEGALE_ARGUMENT_TEMPLATE = "Illegale input argument";
+	private static final String WRONG_FILENAME_LENGTH = "Wrong filename length";
+	private static final String WRONG_EXTENTION_LENGTH = "Wrong extention length";
+	private static final String ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE = "Error while closing output stream";
+	private static final String ERROR_WHILE_WRITING_TO_AVS_FILE = "Error writing to avs file";
+	private static final String ERROR_CREATING_AVS_FILE_TEMPLATE = "Error creating avs script file";
 
 	@Override
 	public List<File> getInputFolderList(String inputFolders) {
 		List<File> inputFolderList = new ArrayList<File>();
 		List<String> inputFoldersNames = Arrays.asList(inputFolders
-				.split(folderListSeparator));
+				.split(FOLDER_LIST_SEPARATOR));
 		for (String string : inputFoldersNames) {
 			inputFolderList.add(new File(string));
 		}
@@ -60,9 +66,9 @@ public class FileServiceImpl implements FileService {
 					.listFiles(sybtitleFileNameFilter));
 			String videoFileNameVithoutExtention = null;
 			String sybtitleFileNameVithoutExtention = null;
-			String videoFileExtention = PropertiesReaderImpl.getInstance()
+			String videoFileExtention = PropertiesReaderServiceImpl.getInstance()
 					.getPropertyValue(ApplicationSetting.VIDEO_FILE_EXTENTION);
-			String sybtitleFileExtention = PropertiesReaderImpl.getInstance()
+			String sybtitleFileExtention = PropertiesReaderServiceImpl.getInstance()
 					.getPropertyValue(
 							ApplicationSetting.SYBTITLE_FILE_EXTENTION);
 			for (File videoFile : videoFilesList) {
@@ -76,7 +82,7 @@ public class FileServiceImpl implements FileService {
 								.equals(sybtitleFileNameVithoutExtention)) {
 							filePairs.put(videoFile, sybtitleFile);
 						}
-					} catch (IllegalArgumentException e) {						
+					} catch (IllegalArgumentException e) {
 						logger.info(ILLEGALE_ARGUMENT_TEMPLATE);
 						logger.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
@@ -117,6 +123,40 @@ public class FileServiceImpl implements FileService {
 		returnFileName = String.copyValueOf(fileName.toCharArray(), 0,
 				fileNameLength - extentionLength);
 		return returnFileName;
+	}
+
+	@Override
+	public File formAvsScriptFile(String filePath, List<String> scriptLines) {
+		File returnFile = new File(filePath);
+
+		try {
+			returnFile.createNewFile();
+		} catch (IOException e) {
+			logger.debug(ERROR_CREATING_AVS_FILE_TEMPLATE);
+			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+		}
+
+		BufferedWriter outputStreamWriter = null;
+		try {
+			outputStreamWriter = new BufferedWriter(new FileWriter(returnFile));
+			for (String line : scriptLines) {
+				outputStreamWriter.write(line);
+			}
+		} catch (IOException e) {
+			logger.debug(ERROR_WHILE_WRITING_TO_AVS_FILE);
+			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+		} finally {
+			if (outputStreamWriter != null) {
+				try {
+					outputStreamWriter.close();
+				} catch (Exception e) {
+					logger.debug(ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE);
+					logger.debug(
+							ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+				}
+			}
+		}
+		return returnFile;
 	}
 
 }
