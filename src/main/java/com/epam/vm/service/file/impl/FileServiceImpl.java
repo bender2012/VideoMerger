@@ -1,7 +1,10 @@
 package com.epam.vm.service.file.impl;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -36,6 +39,9 @@ public class FileServiceImpl implements FileService {
 	private static final String ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE = "Error while closing output stream";
 	private static final String ERROR_WHILE_WRITING_TO_AVS_FILE = "Error writing to avs file";
 	private static final String ERROR_CREATING_AVS_FILE_TEMPLATE = "Error creating avs script file";
+	private static final String FILE_NOT_FOUND = "Template file not found. Path: {}";
+	private static final String ERROR_READING_FILE = "Error reading file. File path: {}";
+	private static final String ERROR_CLOASING_READER = "Error cloasing file reader. File path: {}";
 
 	@Override
 	public List<File> getInputFolderList(String inputFolders) {
@@ -157,6 +163,37 @@ public class FileServiceImpl implements FileService {
 			}
 		}
 		return returnFile;
+	}
+
+	@Override
+	public List<String> getTextFileLines(String filePath) {
+		List<String> fileLines = new ArrayList<String>();
+		File avsTemplateFile = null;		
+		avsTemplateFile = new File(filePath);
+		BufferedReader bufferedReader = null;
+		try {
+			bufferedReader = new BufferedReader(new FileReader(avsTemplateFile));
+			String fileLine = null;
+			while((fileLine = bufferedReader.readLine()) != null){
+				fileLines.add(fileLine);				
+			}			
+		} catch (FileNotFoundException e) {			
+			logger.debug(FILE_NOT_FOUND, avsTemplateFile);
+			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);			
+		} catch (IOException e) {
+			logger.debug(ERROR_READING_FILE, filePath);
+			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+		} finally {
+			try {
+				if(bufferedReader != null) {
+					bufferedReader.close();
+				}
+			} catch (Exception e) {
+				logger.debug(ERROR_CLOASING_READER, filePath);
+				logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+			}
+		}		
+		return fileLines;
 	}
 
 }

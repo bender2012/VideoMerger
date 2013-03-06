@@ -21,5 +21,7 @@ public interface FileService {
 			IllegalArgumentException;
 	
 	File formAvsScriptFile(String filePath, List<String> scriptLines);
+	
+	List<String> getTextFileLines(String filePath);
 
 }

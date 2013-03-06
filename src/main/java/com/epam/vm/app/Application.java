@@ -47,7 +47,7 @@ public class Application {
 		System.out.println(cf.getCommandFromApplicationSettings("D:\\tmp\\a.avs", "D:\\tmp\\01_05_.wmv"));
 		
 		AvsScriptService a = new AvsScriptServiceImpl();
-		a.getScriptCommandsFromTemplate();
+		//a.getScriptCommandsFromTemplate();
 		
 	}
 	
