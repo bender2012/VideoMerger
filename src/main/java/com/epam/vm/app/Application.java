@@ -1,7 +1,9 @@
 package com.epam.vm.app;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.exceptions.NotFolderException;
@@ -47,6 +49,18 @@ public class Application {
 		System.out.println(cf.getCommandFromApplicationSettings("D:\\tmp\\a.avs", "D:\\tmp\\01_05_.wmv"));
 		
 		AvsScriptService a = new AvsScriptServiceImpl();
+		
+		/*
+		LoadPlugin("$VS_FILTER_PATH$")
+		AviSource("$INPUT_VIDEO_FILE$")
+		TextSub("$INPUT_SYBTITLE_FILE$")
+		*/
+		Map<String, String> templatePairs = new HashMap<String, String>();
+		templatePairs.put("VS_FILTER_PATH", "filter-path");
+		templatePairs.put("INPUT_VIDEO_FILE", "input-video-file");
+		templatePairs.put("INPUT_SYBTITLE_FILE", "input-sybtitle-file");
+		
+		a.getScriptCommandsFromTemplate(templatePairs);
 		//a.getScriptCommandsFromTemplate();
 		
 	}

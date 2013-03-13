@@ -45,7 +45,7 @@ public class PropertiesReaderServiceImpl implements PropertiesReaderService {
 		StringBuilder propertiesFileName = new StringBuilder();
 		propertiesFileName.append(parrentFolder);
 		propertiesFileName.append(File.separator);
-		propertiesFileName.append(ApplicationConstants.propertiesFileName);
+		propertiesFileName.append(ApplicationConstants.PROPERTIES_FILE_NAME);
 		Properties applicatioProperties = new Properties();
 		logger.info(START_READ_PROPERTIES, propertiesFileName);
 		try {

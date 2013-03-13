@@ -8,8 +8,7 @@ public enum ApplicationSetting {
 	INPUT_FOLDERS("input-folders"),
 	OUTPUT_FOLDER("output-folder"),
 	VIDEO_FILE_EXTENTION("video-file-extention"),
-	SYBTITLE_FILE_EXTENTION("sybtitle-file-extention"),
-	;
+	SYBTITLE_FILE_EXTENTION("sybtitle-file-extention");
 
 	private String settingName;
 
