@@ -27,7 +27,7 @@ public class ExtentionFileFilterFactoryImpl implements
 	public FilenameFilter getVideoFileFilter() {
 		PropertiesReaderService propertiesReader = PropertiesReaderServiceImpl.getInstance();
 		return getExtentionFileFilter(propertiesReader
-				.getPropertyValue(ApplicationSetting.VIDEO_FILE_EXTENTION));
+				.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION));
 	}
 
 	@Override

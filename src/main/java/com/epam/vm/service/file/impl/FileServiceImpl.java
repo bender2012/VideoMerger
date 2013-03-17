@@ -73,7 +73,7 @@ public class FileServiceImpl implements FileService {
 			String videoFileNameVithoutExtention = null;
 			String sybtitleFileNameVithoutExtention = null;
 			String videoFileExtention = PropertiesReaderServiceImpl.getInstance()
-					.getPropertyValue(ApplicationSetting.VIDEO_FILE_EXTENTION);
+					.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION);
 			String sybtitleFileExtention = PropertiesReaderServiceImpl.getInstance()
 					.getPropertyValue(
 							ApplicationSetting.SYBTITLE_FILE_EXTENTION);
@@ -146,7 +146,8 @@ public class FileServiceImpl implements FileService {
 		try {
 			outputStreamWriter = new BufferedWriter(new FileWriter(returnFile));
 			for (String line : scriptLines) {
-				outputStreamWriter.write(line);
+				outputStreamWriter.write(line);				
+				outputStreamWriter.newLine();
 			}
 		} catch (IOException e) {
 			logger.debug(ERROR_WHILE_WRITING_TO_AVS_FILE);
@@ -195,5 +196,12 @@ public class FileServiceImpl implements FileService {
 		}		
 		return fileLines;
 	}
+
+	@Override
+	public String getLastFolderNameInPath(String filePath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

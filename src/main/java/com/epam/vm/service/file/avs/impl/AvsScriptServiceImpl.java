@@ -7,6 +7,7 @@ import java.util.Map;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 
+import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.service.file.FileService;
 import com.epam.vm.service.file.avs.AvsScriptService;
 import com.epam.vm.service.file.impl.FileServiceImpl;
@@ -35,23 +36,23 @@ public class AvsScriptServiceImpl implements AvsScriptService {
 		
 		TemplateService templateService = new TemplateServiceImpl();
 		
-		avsTemplateFileLines = fileService.getTextFileLines(ApplicationConstants.AVS_TEMPLATE_FILE_NAME);
+		avsTemplateFileLines = fileService.getTextFileLines(applicationProperties.getPropertyValue(ApplicationSetting.AVS_SCRIPT_TEMPLATE_FILE_NAME));
 		
 
 		
 		returnList = templateService.applyTemplates(avsTemplateFileLines, templatePairs);
 
-		System.out.println("avs file:");
-		for (String string : returnList) {
-			System.out.println(string);
-		}
+//		System.out.println("avs file:");
+//		for (String string : returnList) {
+//			System.out.println(string);
+//		}
 		
 		//apply template
 		
 		
-		StringTemplate hello = new StringTemplate("Hello, $name$", DefaultTemplateLexer.class);
-		hello.setAttribute("name", "World");
-		System.out.println(hello.toString());
+//		StringTemplate hello = new StringTemplate("Hello, $name$", DefaultTemplateLexer.class);
+//		hello.setAttribute("name", "World");
+//		System.out.println(hello.toString());
 
 		return returnList;
 	}

@@ -23,5 +23,7 @@ public interface FileService {
 	File formAvsScriptFile(String filePath, List<String> scriptLines);
 	
 	List<String> getTextFileLines(String filePath);
-
+	
+	String getLastFolderNameInPath(String filePath);
+	
 }

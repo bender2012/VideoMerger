@@ -20,12 +20,16 @@ public class CommandFormerServiceImpl implements CommandFormerService {
 		returnCommand.append(FFMPEG_PARAM.DELIMITER.getStringValue());
 		returnCommand.append(FFMPEG_PARAM.INPUT_FILE.getStringValue());
 		returnCommand.append(FFMPEG_PARAM.DELIMITER.getStringValue());
+		returnCommand.append(FFMPEG_PARAM.SINGLE_QUOTES.getStringValue());
 		returnCommand.append(inputFilePath);
+		returnCommand.append(FFMPEG_PARAM.SINGLE_QUOTES.getStringValue());
 		returnCommand.append(FFMPEG_PARAM.DELIMITER.getStringValue());
 		returnCommand.append(properties
 				.getPropertyValue(ApplicationSetting.FFMPEG_COMMANDS));
 		returnCommand.append(FFMPEG_PARAM.DELIMITER.getStringValue());
+		returnCommand.append(FFMPEG_PARAM.SINGLE_QUOTES.getStringValue());
 		returnCommand.append(outputFilePath);
+		returnCommand.append(FFMPEG_PARAM.SINGLE_QUOTES.getStringValue());
 		return returnCommand.toString();
 	}
 
