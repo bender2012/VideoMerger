@@ -13,9 +13,9 @@ import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.service.settings.ApplicationConstants;
 import com.epam.vm.service.settings.PropertiesReaderService;
 
-public class PropertiesReaderServiceImpl implements PropertiesReaderService {
+public final class PropertiesReaderServiceImpl implements PropertiesReaderService {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PropertiesReaderServiceImpl.class);
 	private static final String EXCEPTION_LOG_STRING = "Exception: {}";
 	private static final String FILE_NOT_FOUND_LOG_STRING = "File not found: {}";
@@ -47,23 +47,23 @@ public class PropertiesReaderServiceImpl implements PropertiesReaderService {
 		propertiesFileName.append(File.separator);
 		propertiesFileName.append(ApplicationConstants.PROPERTIES_FILE_NAME);
 		Properties applicatioProperties = new Properties();
-		logger.info(START_READ_PROPERTIES, propertiesFileName);
+		LOGGER.info(START_READ_PROPERTIES, propertiesFileName);
 		try {
 			applicatioProperties.load(new FileInputStream(new File(
 					propertiesFileName.toString())));
 			for (ApplicationSetting applicationSetting : ApplicationSetting
 					.values()) {
-				logger.info(PROPERTY_TEMPLATE, applicationSetting
+				LOGGER.info(PROPERTY_TEMPLATE, applicationSetting
 						.getSettingName(), applicatioProperties
 						.getProperty(applicationSetting.getSettingName()));
 				propertiesMap.put(applicationSetting, applicatioProperties
 						.getProperty(applicationSetting.getSettingName()));
 			}
 		} catch (FileNotFoundException e) {
-			logger.info(FILE_NOT_FOUND_LOG_STRING, propertiesFileName);
-			logger.info(EXCEPTION_LOG_STRING, e);
+			LOGGER.info(FILE_NOT_FOUND_LOG_STRING, propertiesFileName);
+			LOGGER.info(EXCEPTION_LOG_STRING, e);
 		} catch (IOException e) {
-			logger.info(EXCEPTION_LOG_STRING, e);
+			LOGGER.info(EXCEPTION_LOG_STRING, e);
 		}
 	}
 

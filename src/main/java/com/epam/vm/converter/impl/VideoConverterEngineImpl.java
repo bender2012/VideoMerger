@@ -28,20 +28,24 @@ import com.epam.vm.service.file.avs.impl.AvsScriptServiceImpl;
 import com.epam.vm.service.file.impl.FileServiceImpl;
 import com.epam.vm.service.file.template.TemplateService;
 import com.epam.vm.service.file.template.impl.TemplateServiceImpl;
-import com.epam.vm.service.settings.ApplicationConstants;
 import com.epam.vm.service.settings.PropertiesReaderService;
 import com.epam.vm.service.settings.impl.PropertiesReaderServiceImpl;
 
 public class VideoConverterEngineImpl implements VideoConverterEngine {
 
-	private final static Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(Application.class);
-	private String errorMessage;
 	private static final String MAKING_INPUT_FOLDER_LIST = "Making input folder list";
-	private static final String NOT_FOLDER_EXCEPTION = "Input file must be a folder";
+	private static final String NOT_FOLDER_EXCEPTION = "Input file {} must be a folder";
 	private static final String CREATING_OUTPUT_FOLDER = "Creating output folder: {}";
 	private static final String CANT_CREATE_FOLDER = "Can't create output folder: {}";
 	private static final String MERGING_PAIR = "Marging file: {} with file: {}";
+	private static final String NOFILE_TO_MERGE = "Trere are no files to merge in directory: {}";
+	private static final String ILLEGALE_ARGUMENTS_EXCEPTION = "Illegale input arguments";
+	private static final String WRONG_FILE_NAME_LENGTH = "Wrong file name length: {}";
+	private static final String WRONG_EXTENTION_LENGTH = "Wrong extention length: {}";
+	private static final String OUTPUT_FOLDER_ALREADY_EXISTS = "Output folder already exists: {}";
+	private static final String CANT_DELETE_TEMPORARY_SCRIPT = "Can't delete temporary script file: {}";
 
 	private static FileService fileService;
 	private static PropertiesReaderService properties;
@@ -64,7 +68,7 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 	public boolean processVideo() {
 		boolean isConvertationSuccess = true;
 		// Make input file list
-		logger.info(MAKING_INPUT_FOLDER_LIST);
+		LOGGER.info(MAKING_INPUT_FOLDER_LIST);
 		List<File> inputFoldersList = fileService.getInputFolderList(properties
 				.getPropertyValue(ApplicationSetting.INPUT_FOLDERS));
 		Map<File, File> inputFilePairs = null;
@@ -84,7 +88,7 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 					outputFolderNameToCreateSB.append(inputFolder.getName());
 					outputFolderName = outputFolderNameToCreateSB.toString();
 					// Create output folder
-					logger.info(CREATING_OUTPUT_FOLDER, outputFolderName);
+					LOGGER.info(CREATING_OUTPUT_FOLDER, outputFolderName);
 					outputFolder = new File(outputFolderName);
 					Map<String, String> templatePairs;
 					File avsScriptFile = new File(
@@ -93,23 +97,21 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 					List<String> scriptLines;
 					StringBuffer outputVideoFileName;
 					String commandToRun;
-					if (outputFolder.exists()) {// Throw exception
+					if (outputFolder.exists()) {
 						throw new OutputFolderExistsException(
 								outputFolder.getName());
 					}
-					if (!outputFolder.mkdirs()) {// Throw exception
+					if (!outputFolder.mkdirs()) {
 						throw new CantCreateOutputFolderException(
 								outputFolder.getName());
 					}
 					templatePairs = new HashMap<String, String>();
 					for (Entry<File, File> filePair : inputFilePairs.entrySet()) {
-						if (avsScriptFile.exists()) {// Throw exception
-							if (!avsScriptFile.delete()) {
-								throw new CantDeleteTemporaryScriptException(
-										avsScriptFile.getName());
-							}
+						if ((avsScriptFile.exists() && (!avsScriptFile.delete()))) {
+							throw new CantDeleteTemporaryScriptException(
+									avsScriptFile.getName());
 						}
-						logger.info(MERGING_PAIR, filePair.getKey(),
+						LOGGER.info(MERGING_PAIR, filePair.getKey(),
 								filePair.getValue());
 						// Form avs-script for each file
 						templatePairs.putAll(templateService
@@ -139,48 +141,36 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 								.getCommandFromApplicationSettings(
 										avsScriptFile.getAbsolutePath(),
 										outputVideoFileName.toString());
-
 						// Run each command
 						applicationRunner.runApplication(commandToRun);
 					}
 				} else {
-					//logger.info(NOFILE_TO_MERGE);
-					// TOTO: log there are no file to convert in current folder
-					// inputFolder
+					LOGGER.info(NOFILE_TO_MERGE);
 				}
 			} catch (NotFolderException e) {
-				logger.info(NOT_FOLDER_EXCEPTION);
-				logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+				isConvertationSuccess = false;
+				LOGGER.debug(NOT_FOLDER_EXCEPTION, e.getMessage());
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(ILLEGALE_ARGUMENTS_EXCEPTION);
 			} catch (WrongFileNameLengthException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(WRONG_FILE_NAME_LENGTH, e.getMessage());
 			} catch (WrongExtentionLengthException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(WRONG_EXTENTION_LENGTH, e.getMessage());
 			} catch (OutputFolderExistsException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(OUTPUT_FOLDER_ALREADY_EXISTS, e.getMessage());
 			} catch (CantCreateOutputFolderException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(CANT_CREATE_FOLDER, e.getMessage());
 			} catch (CantDeleteTemporaryScriptException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				isConvertationSuccess = false;
+				LOGGER.debug(CANT_DELETE_TEMPORARY_SCRIPT, e.getMessage());
 			}
 		}
 		return isConvertationSuccess;
-	}
-
-	private void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	@Override
-	public String getErrorMessage() {
-		return this.errorMessage;
 	}
 
 }

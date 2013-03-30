@@ -12,8 +12,7 @@ public enum ApplicationSetting {
 	SYBTITLE_FILE_EXTENTION("sybtitle-file-extention"),
 	AVS_SCRIPT_TEMPLATE_FILE_NAME("avs-script-template-filename"),
 	AVS_TEMPORARY_SCRIPT_FILE_NAME("avs-temporary-script-filename"),
-	VS_FILTER_PATH("vs-filter-path");
-	
+	VS_FILTER_PATH("vs-filter-path");	
 
 	private String settingName;
 

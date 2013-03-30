@@ -6,17 +6,21 @@ import org.slf4j.LoggerFactory;
 import com.epam.vm.converter.VideoConverterEngine;
 import com.epam.vm.converter.impl.VideoConverterEngineImpl;
 
-public class Application {
+public final class Application {
 
-	private final static Logger logger = LoggerFactory
+	private static final  Logger LOGGER = LoggerFactory
 			.getLogger(Application.class);
 	private static final String CONVERTATION_SUCCESS_MESSAGE = "Convertation sucess: {}";
+	
+	private Application(){
+		
+	}
 
 	public static void main(String[] args) {
 		VideoConverterEngine videoConverterEngine = new VideoConverterEngineImpl();
 		boolean isConvertationSucess = true;
 		isConvertationSucess = videoConverterEngine.processVideo();
-		logger.info(CONVERTATION_SUCCESS_MESSAGE, isConvertationSucess);
+		LOGGER.info(CONVERTATION_SUCCESS_MESSAGE, isConvertationSucess);
 	}
 
 }

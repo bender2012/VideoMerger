@@ -12,18 +12,16 @@ public interface FileService {
 
 	List<File> getInputFolderList(String inputFolders);
 
-	//Video file : Sysbtitle file
+	// Video file : Sysbtitle file
 	Map<File, File> getVideoWithSubtitlesPairs(File inputFolder)
 			throws NotFolderException;
 
 	String getFileNameWithoutExtention(String fileName, String extention)
 			throws WrongFileNameLengthException, WrongExtentionLengthException,
 			IllegalArgumentException;
-	
+
 	File formAvsScriptFile(String filePath, List<String> scriptLines);
-	
+
 	List<String> getTextFileLines(String filePath);
-	
-	String getLastFolderNameInPath(String filePath);
-	
+
 }

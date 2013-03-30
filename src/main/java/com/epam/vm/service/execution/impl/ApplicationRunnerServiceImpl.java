@@ -12,59 +12,54 @@ import com.epam.vm.service.settings.ApplicationConstants;
 
 public class ApplicationRunnerServiceImpl implements ApplicationRunnerService {
 
-	private static final Logger debugLogger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ApplicationRunnerServiceImpl.class);
+	private static final String PROCESS_EXIT_MESSAGE = "FFMPEG process exited with code: {}";
 
 	@Override
 	public void runApplication(String commandString) {
-
-		Runtime runtime = Runtime.getRuntime();
+		BufferedReader inputInfoStream = null;
+		BufferedReader inputErrorsStream = null;
 		try {
-			// Process applicationProcess = runtime.exec(commandString);
-			// applicationProcess.exitValue();
-			Runtime rt = Runtime.getRuntime();
-			// Process pr = rt.exec("cmd /c dir");
-			Process pr = rt.exec(commandString);
-			//String[] ffmpeg = new String[] {"d:\\Programs\\ffmpeg\\bin\\ffmpeg.exe", " -i ", "\"d:\\GIT_Repositories\\VideoMerger\\target\\avs.avs\"", " -t ", " 10 ", "\"d:\\tmp\\output\\Season_1\\01x07 - The One With the Blackout1.wmv\""};
-//			String result = "";
-//			for (String string : ffmpeg) {
-//				result += string;
-//			}
-			//System.out.println("RESULT: " + result);
-			//ffmpeg.exe -i "d:\GIT_Repositories\VideoMerger\target\avs.avs" -t 10 "d:\tmp\output\\Season_1\01x07 - The One With the Blackout1.wmv"
-			//Process pr = rt.exec(ffmpeg);
-
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					pr.getInputStream()));
-			
-			BufferedReader inputErr = new BufferedReader(new InputStreamReader(
-					pr.getErrorStream()));
-
-			String line = null;
-
-			while ((line = inputErr.readLine()) != null) {
-				System.out.println(line);
+			Runtime runtime = Runtime.getRuntime();
+			Process process = runtime.exec(commandString);
+			inputInfoStream = new BufferedReader(new InputStreamReader(
+					process.getInputStream()));
+			inputErrorsStream = new BufferedReader(new InputStreamReader(
+					process.getErrorStream()));
+			String lineWithError = null;
+			String lineWithInfo = null;
+			while ((lineWithError = inputErrorsStream.readLine()) != null) {
+				LOGGER.error(lineWithError);
 			}
-
-			while ((line = input.readLine()) != null) {
-				System.out.println(line);
+			while ((lineWithInfo = inputInfoStream.readLine()) != null) {
+				LOGGER.info(lineWithInfo);
 			}
-			input.close();
-			inputErr.close();
-
-			
-			int exitVal = pr.waitFor();
-			System.out.println("Exited with error code " + exitVal);
+			int exitVal = process.waitFor();
+			LOGGER.info(PROCESS_EXIT_MESSAGE, exitVal);
 		} catch (IOException e) {
-			debugLogger
-					.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} catch (IllegalThreadStateException e) {
-			// TODO: handle exception
-			System.out
-					.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+		} finally {
+			if (inputInfoStream != null) {
+				try {
+					inputInfoStream.close();
+				} catch (Exception e) {
+					LOGGER.debug(
+							ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+				}
+			}
+			if (inputErrorsStream != null) {
+				try {
+					inputErrorsStream.close();
+				} catch (Exception e) {
+					LOGGER.debug(
+							ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+				}
+			}
 		}
 
 	}

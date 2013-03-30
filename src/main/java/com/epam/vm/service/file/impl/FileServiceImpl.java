@@ -29,7 +29,7 @@ import com.epam.vm.service.settings.impl.PropertiesReaderServiceImpl;
 
 public class FileServiceImpl implements FileService {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(FileServiceImpl.class);
 
 	private static final String FOLDER_LIST_SEPARATOR = ";";
@@ -59,7 +59,7 @@ public class FileServiceImpl implements FileService {
 			throws NotFolderException {
 		Map<File, File> filePairs = new HashMap<File, File>();
 		if (!inputFolder.isDirectory()) {
-			throw new NotFolderException();
+			throw new NotFolderException(inputFolder.getAbsolutePath());
 		} else {
 			ExtentionFileFilterFactory extentionFileFilterFactory = new ExtentionFileFilterFactoryImpl();
 			FilenameFilter videoFileNameFilter = extentionFileFilterFactory
@@ -89,18 +89,18 @@ public class FileServiceImpl implements FileService {
 							filePairs.put(videoFile, sybtitleFile);
 						}
 					} catch (IllegalArgumentException e) {
-						logger.info(ILLEGALE_ARGUMENT_TEMPLATE);
-						logger.info(
+						LOGGER.info(ILLEGALE_ARGUMENT_TEMPLATE);
+						LOGGER.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
 								e);
 					} catch (WrongFileNameLengthException e) {
-						logger.info(WRONG_FILENAME_LENGTH);
-						logger.info(
+						LOGGER.info(WRONG_FILENAME_LENGTH);
+						LOGGER.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
 								e);
 					} catch (WrongExtentionLengthException e) {
-						logger.info(WRONG_EXTENTION_LENGTH);
-						logger.info(
+						LOGGER.info(WRONG_EXTENTION_LENGTH);
+						LOGGER.info(
 								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
 								e);
 					}
@@ -118,10 +118,10 @@ public class FileServiceImpl implements FileService {
 		int fileNameLength = fileName.length();
 		int extentionLength = extention.length();
 		if (fileNameLength <= 0) {
-			throw new WrongFileNameLengthException();
+			throw new WrongFileNameLengthException(fileName);
 		}
 		if (extentionLength <= 0) {
-			throw new WrongExtentionLengthException();
+			throw new WrongExtentionLengthException(extention);
 		}
 		if ((fileNameLength - extentionLength) <= 1) {
 			throw new IllegalArgumentException();
@@ -138,8 +138,8 @@ public class FileServiceImpl implements FileService {
 		try {
 			returnFile.createNewFile();
 		} catch (IOException e) {
-			logger.debug(ERROR_CREATING_AVS_FILE_TEMPLATE);
-			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+			LOGGER.debug(ERROR_CREATING_AVS_FILE_TEMPLATE);
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		}
 
 		BufferedWriter outputStreamWriter = null;
@@ -150,15 +150,15 @@ public class FileServiceImpl implements FileService {
 				outputStreamWriter.newLine();
 			}
 		} catch (IOException e) {
-			logger.debug(ERROR_WHILE_WRITING_TO_AVS_FILE);
-			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+			LOGGER.debug(ERROR_WHILE_WRITING_TO_AVS_FILE);
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} finally {
 			if (outputStreamWriter != null) {
 				try {
 					outputStreamWriter.close();
 				} catch (Exception e) {
-					logger.debug(ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE);
-					logger.debug(
+					LOGGER.debug(ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE);
+					LOGGER.debug(
 							ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 				}
 			}
@@ -179,29 +179,22 @@ public class FileServiceImpl implements FileService {
 				fileLines.add(fileLine);				
 			}			
 		} catch (FileNotFoundException e) {			
-			logger.debug(FILE_NOT_FOUND, avsTemplateFile);
-			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);			
+			LOGGER.debug(FILE_NOT_FOUND, avsTemplateFile);
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);			
 		} catch (IOException e) {
-			logger.debug(ERROR_READING_FILE, filePath);
-			logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+			LOGGER.debug(ERROR_READING_FILE, filePath);
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} finally {
 			try {
 				if(bufferedReader != null) {
 					bufferedReader.close();
 				}
 			} catch (Exception e) {
-				logger.debug(ERROR_CLOASING_READER, filePath);
-				logger.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
+				LOGGER.debug(ERROR_CLOASING_READER, filePath);
+				LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 			}
 		}		
 		return fileLines;
 	}
-
-	@Override
-	public String getLastFolderNameInPath(String filePath) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }
