@@ -12,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import com.epam.vm.app.Application;
 import com.epam.vm.converter.VideoConverterEngine;
 import com.epam.vm.enums.ApplicationSetting;
-import com.epam.vm.exceptions.CantCreateOutputFolderException;
-import com.epam.vm.exceptions.CantDeleteTemporaryScriptException;
-import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.exceptions.OutputFolderExistsException;
-import com.epam.vm.exceptions.WrongExtentionLengthException;
-import com.epam.vm.exceptions.WrongFileNameLengthException;
+import com.epam.vm.exceptions.file.FileException;
+import com.epam.vm.exceptions.file.filename.WrongExtentionLengthException;
+import com.epam.vm.exceptions.file.filename.WrongFileNameLengthException;
+import com.epam.vm.exceptions.file.script.CantDeleteTemporaryScriptException;
+import com.epam.vm.exceptions.folder.CantCreateOutputFolderException;
+import com.epam.vm.exceptions.folder.NotFolderException;
+import com.epam.vm.exceptions.folder.OutputFolderExistsException;
 import com.epam.vm.service.execution.ApplicationRunnerService;
 import com.epam.vm.service.execution.CommandFormerService;
 import com.epam.vm.service.execution.impl.ApplicationRunnerServiceImpl;
@@ -46,6 +47,7 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 	private static final String WRONG_EXTENTION_LENGTH = "Wrong extention length: {}";
 	private static final String OUTPUT_FOLDER_ALREADY_EXISTS = "Output folder already exists: {}";
 	private static final String CANT_DELETE_TEMPORARY_SCRIPT = "Can't delete temporary script file: {}";
+	private static final String WRONG_FILE_NAME = null;
 
 	private static FileService fileService;
 	private static PropertiesReaderService properties;
@@ -168,6 +170,9 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 			} catch (CantDeleteTemporaryScriptException e) {
 				isConvertationSuccess = false;
 				LOGGER.debug(CANT_DELETE_TEMPORARY_SCRIPT, e.getMessage());
+			} catch (FileException e) {
+				isConvertationSuccess = false;
+				LOGGER.debug(WRONG_FILE_NAME, e);				
 			}
 		}
 		return isConvertationSuccess;

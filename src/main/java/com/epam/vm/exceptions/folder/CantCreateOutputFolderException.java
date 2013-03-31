@@ -1,4 +1,4 @@
-package com.epam.vm.exceptions;
+package com.epam.vm.exceptions.folder;
 
 public class CantCreateOutputFolderException extends Exception {
 

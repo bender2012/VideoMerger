@@ -4,9 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.exceptions.WrongExtentionLengthException;
-import com.epam.vm.exceptions.WrongFileNameLengthException;
+import com.epam.vm.exceptions.file.FileException;
+import com.epam.vm.exceptions.folder.NotFolderException;
 
 public interface FileService {
 
@@ -17,8 +16,7 @@ public interface FileService {
 			throws NotFolderException;
 
 	String getFileNameWithoutExtention(String fileName, String extention)
-			throws WrongFileNameLengthException, WrongExtentionLengthException,
-			IllegalArgumentException;
+			throws FileException;
 
 	File formAvsScriptFile(String filePath, List<String> scriptLines);
 

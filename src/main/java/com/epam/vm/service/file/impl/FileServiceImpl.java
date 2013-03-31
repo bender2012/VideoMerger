@@ -20,9 +20,10 @@ import org.slf4j.LoggerFactory;
 import com.epam.vm.enums.ApplicationSetting;
 import com.epam.vm.etc.filefilters.ExtentionFileFilterFactory;
 import com.epam.vm.etc.filefilters.impl.ExtentionFileFilterFactoryImpl;
-import com.epam.vm.exceptions.NotFolderException;
-import com.epam.vm.exceptions.WrongExtentionLengthException;
-import com.epam.vm.exceptions.WrongFileNameLengthException;
+import com.epam.vm.exceptions.file.FileException;
+import com.epam.vm.exceptions.file.filename.WrongExtentionLengthException;
+import com.epam.vm.exceptions.file.filename.WrongFileNameLengthException;
+import com.epam.vm.exceptions.folder.NotFolderException;
 import com.epam.vm.service.file.FileService;
 import com.epam.vm.service.settings.ApplicationConstants;
 import com.epam.vm.service.settings.impl.PropertiesReaderServiceImpl;
@@ -34,14 +35,16 @@ public class FileServiceImpl implements FileService {
 
 	private static final String FOLDER_LIST_SEPARATOR = ";";
 	private static final String ILLEGALE_ARGUMENT_TEMPLATE = "Illegale input argument";
-	private static final String WRONG_FILENAME_LENGTH = "Wrong filename length";
-	private static final String WRONG_EXTENTION_LENGTH = "Wrong extention length";
+	private static final String WRONG_FILENAME_LENGTH = "Wrong filename length: {}";
+	private static final String WRONG_EXTENTION_LENGTH = "Wrong extention length: {}";
 	private static final String ERROR_CLOSING_OUTPUT_STREAM_TEMPLATE = "Error while closing output stream";
 	private static final String ERROR_WHILE_WRITING_TO_AVS_FILE = "Error writing to avs file";
 	private static final String ERROR_CREATING_AVS_FILE_TEMPLATE = "Error creating avs script file";
 	private static final String FILE_NOT_FOUND = "Template file not found. Path: {}";
 	private static final String ERROR_READING_FILE = "Error reading file. File path: {}";
 	private static final String ERROR_CLOASING_READER = "Error cloasing file reader. File path: {}";
+
+	private static final String WRONG_FILE_NAME = "Wrong file name: {}";
 
 	@Override
 	public List<File> getInputFolderList(String inputFolders) {
@@ -60,60 +63,61 @@ public class FileServiceImpl implements FileService {
 		Map<File, File> filePairs = new HashMap<File, File>();
 		if (!inputFolder.isDirectory()) {
 			throw new NotFolderException(inputFolder.getAbsolutePath());
-		} else {
-			ExtentionFileFilterFactory extentionFileFilterFactory = new ExtentionFileFilterFactoryImpl();
-			FilenameFilter videoFileNameFilter = extentionFileFilterFactory
-					.getVideoFileFilter();
-			FilenameFilter sybtitleFileNameFilter = extentionFileFilterFactory
-					.getSybtitlesFileFilter();
-			List<File> videoFilesList = Arrays.asList(inputFolder
-					.listFiles(videoFileNameFilter));
-			List<File> sybtitleFilesList = Arrays.asList(inputFolder
-					.listFiles(sybtitleFileNameFilter));
-			String videoFileNameVithoutExtention = null;
-			String sybtitleFileNameVithoutExtention = null;
-			String videoFileExtention = PropertiesReaderServiceImpl.getInstance()
-					.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION);
-			String sybtitleFileExtention = PropertiesReaderServiceImpl.getInstance()
-					.getPropertyValue(
-							ApplicationSetting.SYBTITLE_FILE_EXTENTION);
-			for (File videoFile : videoFilesList) {
-				for (File sybtitleFile : sybtitleFilesList) {
-					try {
-						videoFileNameVithoutExtention = getFileNameWithoutExtention(
-								videoFile.getName(), videoFileExtention);
-						sybtitleFileNameVithoutExtention = getFileNameWithoutExtention(
-								sybtitleFile.getName(), sybtitleFileExtention);
-						if (videoFileNameVithoutExtention
-								.equals(sybtitleFileNameVithoutExtention)) {
-							filePairs.put(videoFile, sybtitleFile);
-						}
-					} catch (IllegalArgumentException e) {
-						LOGGER.info(ILLEGALE_ARGUMENT_TEMPLATE);
-						LOGGER.info(
-								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
-								e);
-					} catch (WrongFileNameLengthException e) {
-						LOGGER.info(WRONG_FILENAME_LENGTH);
-						LOGGER.info(
-								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
-								e);
-					} catch (WrongExtentionLengthException e) {
-						LOGGER.info(WRONG_EXTENTION_LENGTH);
-						LOGGER.info(
-								ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
-								e);
+		}
+		ExtentionFileFilterFactory extentionFileFilterFactory = new ExtentionFileFilterFactoryImpl();
+		FilenameFilter videoFileNameFilter = extentionFileFilterFactory
+				.getVideoFileFilter();
+		FilenameFilter sybtitleFileNameFilter = extentionFileFilterFactory
+				.getSybtitlesFileFilter();
+		List<File> videoFilesList = Arrays.asList(inputFolder
+				.listFiles(videoFileNameFilter));
+		List<File> sybtitleFilesList = Arrays.asList(inputFolder
+				.listFiles(sybtitleFileNameFilter));
+		String videoFileNameVithoutExtention = null;
+		String sybtitleFileNameVithoutExtention = null;
+		String videoFileExtention = PropertiesReaderServiceImpl
+				.getInstance()
+				.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION);
+		String sybtitleFileExtention = PropertiesReaderServiceImpl
+				.getInstance().getPropertyValue(
+						ApplicationSetting.SYBTITLE_FILE_EXTENTION);
+		for (File videoFile : videoFilesList) {
+			for (File sybtitleFile : sybtitleFilesList) {
+				try {
+					videoFileNameVithoutExtention = getFileNameWithoutExtention(
+							videoFile.getName(), videoFileExtention);
+					sybtitleFileNameVithoutExtention = getFileNameWithoutExtention(
+							sybtitleFile.getName(), sybtitleFileExtention);
+					if (videoFileNameVithoutExtention
+							.equals(sybtitleFileNameVithoutExtention)) {
+						filePairs.put(videoFile, sybtitleFile);
 					}
+				} catch (IllegalArgumentException e) {
+					LOGGER.debug(ILLEGALE_ARGUMENT_TEMPLATE);
+					LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
+							e);
+				} catch (WrongFileNameLengthException e) {
+					LOGGER.debug(WRONG_FILENAME_LENGTH, e.getMessage());
+					LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
+							e);
+				} catch (WrongExtentionLengthException e) {
+					LOGGER.debug(WRONG_EXTENTION_LENGTH, e.getMessage());
+					LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
+							e);
+				} catch (FileException e) {
+					LOGGER.debug(WRONG_FILE_NAME, e.getMessage());
+					LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE,
+							e);
 				}
 			}
 		}
+
 		return filePairs;
 	}
 
 	@Override
 	public String getFileNameWithoutExtention(String fileName, String extention)
-			throws WrongFileNameLengthException, WrongExtentionLengthException,
-			IllegalArgumentException {
+			throws FileException {
 		String returnFileName = null;
 		int fileNameLength = fileName.length();
 		int extentionLength = extention.length();
@@ -146,7 +150,7 @@ public class FileServiceImpl implements FileService {
 		try {
 			outputStreamWriter = new BufferedWriter(new FileWriter(returnFile));
 			for (String line : scriptLines) {
-				outputStreamWriter.write(line);				
+				outputStreamWriter.write(line);
 				outputStreamWriter.newLine();
 			}
 		} catch (IOException e) {
@@ -169,31 +173,31 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public List<String> getTextFileLines(String filePath) {
 		List<String> fileLines = new ArrayList<String>();
-		File avsTemplateFile = null;		
+		File avsTemplateFile = null;
 		avsTemplateFile = new File(filePath);
 		BufferedReader bufferedReader = null;
 		try {
 			bufferedReader = new BufferedReader(new FileReader(avsTemplateFile));
 			String fileLine = null;
-			while((fileLine = bufferedReader.readLine()) != null){
-				fileLines.add(fileLine);				
-			}			
-		} catch (FileNotFoundException e) {			
+			while ((fileLine = bufferedReader.readLine()) != null) {
+				fileLines.add(fileLine);
+			}
+		} catch (FileNotFoundException e) {
 			LOGGER.debug(FILE_NOT_FOUND, avsTemplateFile);
-			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);			
+			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} catch (IOException e) {
 			LOGGER.debug(ERROR_READING_FILE, filePath);
 			LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 		} finally {
 			try {
-				if(bufferedReader != null) {
+				if (bufferedReader != null) {
 					bufferedReader.close();
 				}
 			} catch (Exception e) {
 				LOGGER.debug(ERROR_CLOASING_READER, filePath);
 				LOGGER.debug(ApplicationConstants.EXCEPTION_LOGGER_TEMPLATE, e);
 			}
-		}		
+		}
 		return fileLines;
 	}
 
