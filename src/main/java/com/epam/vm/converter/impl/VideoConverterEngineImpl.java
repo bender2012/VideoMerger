@@ -92,13 +92,6 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 					// Create output folder
 					LOGGER.info(CREATING_OUTPUT_FOLDER, outputFolderName);
 					outputFolder = new File(outputFolderName);
-					Map<String, String> templatePairs;
-					File avsScriptFile = new File(
-							properties
-									.getPropertyValue(ApplicationSetting.AVS_TEMPORARY_SCRIPT_FILE_NAME));
-					List<String> scriptLines;
-					StringBuffer outputVideoFileName;
-					String commandToRun;
 					if (outputFolder.exists()) {
 						throw new OutputFolderExistsException(
 								outputFolder.getName());
@@ -107,45 +100,8 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 						throw new CantCreateOutputFolderException(
 								outputFolder.getName());
 					}
-					templatePairs = new HashMap<String, String>();
-					for (Entry<File, File> filePair : inputFilePairs.entrySet()) {
-						if ((avsScriptFile.exists() && (!avsScriptFile.delete()))) {
-							throw new CantDeleteTemporaryScriptException(
-									avsScriptFile.getName());
-						}
-						LOGGER.info(MERGING_PAIR, filePair.getKey(),
-								filePair.getValue());
-						// Form avs-script for each file
-						templatePairs.putAll(templateService
-								.getVSFilterPathTemplatePair());
-						templatePairs
-								.putAll(templateService
-										.getVideoAndSybtitleFilesTemplatepairs(
-												filePair.getKey(),
-												filePair.getValue()));
-						scriptLines = avsScriptService
-								.getScriptCommandsFromTemplate(templatePairs);
-						avsScriptFile = fileService.formAvsScriptFile(
-								avsScriptFile.getAbsolutePath(), scriptLines);
-						// Form command for each file
-						outputVideoFileName = new StringBuffer();
-						outputVideoFileName.append(outputFolderName);
-						outputVideoFileName.append(File.separator);
-						outputVideoFileName
-								.append(fileService.getFileNameWithoutExtention(
-										filePair.getKey().getName(),
-										properties
-												.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION)));
-						outputVideoFileName
-								.append(properties
-										.getPropertyValue(ApplicationSetting.OUTPUT_VIDEO_FILE_EXTENTION));
-						commandToRun = commandFormerService
-								.getCommandFromApplicationSettings(
-										avsScriptFile.getAbsolutePath(),
-										outputVideoFileName.toString());
-						// Run each command
-						applicationRunner.runApplication(commandToRun);
-					}
+					isConvertationSuccess = processFilePairs(inputFilePairs,
+							outputFolder);
 				} else {
 					LOGGER.info(NOFILE_TO_MERGE);
 				}
@@ -155,27 +111,78 @@ public class VideoConverterEngineImpl implements VideoConverterEngine {
 			} catch (IllegalArgumentException e) {
 				isConvertationSuccess = false;
 				LOGGER.debug(ILLEGALE_ARGUMENTS_EXCEPTION);
-			} catch (WrongFileNameLengthException e) {
-				isConvertationSuccess = false;
-				LOGGER.debug(WRONG_FILE_NAME_LENGTH, e.getMessage());
-			} catch (WrongExtentionLengthException e) {
-				isConvertationSuccess = false;
-				LOGGER.debug(WRONG_EXTENTION_LENGTH, e.getMessage());
 			} catch (OutputFolderExistsException e) {
 				isConvertationSuccess = false;
 				LOGGER.debug(OUTPUT_FOLDER_ALREADY_EXISTS, e.getMessage());
 			} catch (CantCreateOutputFolderException e) {
 				isConvertationSuccess = false;
 				LOGGER.debug(CANT_CREATE_FOLDER, e.getMessage());
-			} catch (CantDeleteTemporaryScriptException e) {
-				isConvertationSuccess = false;
-				LOGGER.debug(CANT_DELETE_TEMPORARY_SCRIPT, e.getMessage());
-			} catch (FileException e) {
-				isConvertationSuccess = false;
-				LOGGER.debug(WRONG_FILE_NAME, e);				
 			}
 		}
 		return isConvertationSuccess;
 	}
 
+	private boolean processFilePairs(Map<File, File> inputFilePairs,
+			File outputFolder) {
+		boolean sucess = true;
+		List<String> scriptLines;
+		StringBuffer outputVideoFileName;
+		String commandToRun;
+		Map<String, String> templatePairs = new HashMap<String, String>();
+		File avsScriptFile = new File(
+				properties
+						.getPropertyValue(ApplicationSetting.AVS_TEMPORARY_SCRIPT_FILE_NAME));
+		try {
+			for (Entry<File, File> filePair : inputFilePairs.entrySet()) {
+				if ((avsScriptFile.exists() && (!avsScriptFile.delete()))) {
+					throw new CantDeleteTemporaryScriptException(
+							avsScriptFile.getName());
+
+				}
+				LOGGER.info(MERGING_PAIR, filePair.getKey(),
+						filePair.getValue());
+				// Form avs-script for each file
+				templatePairs.putAll(templateService
+						.getVSFilterPathTemplatePair());
+				templatePairs.putAll(templateService
+						.getVideoAndSybtitleFilesTemplatepairs(
+								filePair.getKey(), filePair.getValue()));
+				scriptLines = avsScriptService
+						.getScriptCommandsFromTemplate(templatePairs);
+				avsScriptFile = fileService.formAvsScriptFile(
+						avsScriptFile.getAbsolutePath(), scriptLines);
+				// Form command for each file
+				outputVideoFileName = new StringBuffer();
+				outputVideoFileName.append(outputFolder.getAbsolutePath());
+				outputVideoFileName.append(File.separator);
+				outputVideoFileName
+						.append(fileService.getFileNameWithoutExtention(
+								filePair.getKey().getName(),
+								properties
+										.getPropertyValue(ApplicationSetting.INPUT_VIDEO_FILE_EXTENTION)));
+				outputVideoFileName
+						.append(properties
+								.getPropertyValue(ApplicationSetting.OUTPUT_VIDEO_FILE_EXTENTION));
+				commandToRun = commandFormerService
+						.getCommandFromApplicationSettings(
+								avsScriptFile.getAbsolutePath(),
+								outputVideoFileName.toString());
+				// Run each command
+				applicationRunner.runApplication(commandToRun);
+			}
+		} catch (CantDeleteTemporaryScriptException e) {
+			sucess = false;
+			LOGGER.debug(CANT_DELETE_TEMPORARY_SCRIPT, e.getMessage());
+		} catch (WrongFileNameLengthException e) {
+			sucess = false;
+			LOGGER.debug(WRONG_FILE_NAME_LENGTH, e.getMessage());
+		} catch (WrongExtentionLengthException e) {
+			sucess = false;
+			LOGGER.debug(WRONG_EXTENTION_LENGTH, e.getMessage());
+		} catch (FileException e) {
+			sucess = false;
+			LOGGER.debug(WRONG_FILE_NAME, e);
+		}
+		return sucess;
+	}
 }
